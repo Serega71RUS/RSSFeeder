@@ -48,6 +48,7 @@ namespace RSSFeeder.Pages
         public void ReadXML()
         {
             //Message = "Ссылка подходит";
+            //
             XmlDocument xDoc = new XmlDocument();
             xDoc.Load("Settings.xml");
             XmlElement xRoot = xDoc.DocumentElement;
