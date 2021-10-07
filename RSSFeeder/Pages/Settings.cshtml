@@ -1,0 +1,32 @@
+﻿@page
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Settings";
+}
+@functions{
+
+}
+
+<head>
+
+</head>
+<body>
+    <h1>@ViewData["Title"]</h1>
+    <form method="post">
+        <table class="demoTable" style="height: 54px;">
+            <tbody>
+                <tr>
+                    <td>Ссылка на RSS</td>
+                    <td><input type="text" size="40" name="urltextbox" value="@Model.url"></td>
+                    <td>@Model.Message</td>
+                </tr>
+                <tr>
+                    <td>Время обновления: </td>
+                    <td><input type="text" size="40" name="timetextbox" value="@Model.timeS"></td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="submit" name="buttonsave" value="@Model.Message">
+    </form>
+</body>
+

@@ -1,0 +1,110 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@using CodeHollow.FeedReader
+@using System.Xml
+@using System.Timers
+
+@functions{
+
+    public static string url;
+    public static int timeS;
+
+    public void ReadXML()
+    {
+        XmlDocument xDoc = new XmlDocument();
+        xDoc.Load("Settings.xml");
+        XmlElement xRoot = xDoc.DocumentElement;
+        foreach (XmlNode xnode in xRoot)
+        {
+            if (xnode.Name == "url")
+                url = xnode.InnerText;
+            if (xnode.Name == "updatetime")
+                timeS = Convert.ToInt32(xnode.InnerText);
+        }
+    }
+
+    public void RSS()
+    {
+        //ReadXML();
+        //string url = "https://habr.com/ru/rss/interesting/";
+        var urlsTask = FeedReader.GetFeedUrlsFromUrlAsync(url);
+        var urls = urlsTask.Result;
+        string feedUrl = url;
+        var readerTask = FeedReader.ReadAsync(feedUrl);
+        readerTask.ConfigureAwait(false);
+
+        foreach (var item in readerTask.Result.Items)
+        {
+            <tr>
+                <td>
+                    <p align="left"><a href="@item.Link">@item.Title</a></p>
+                    <p align="right">@item.PublishingDate</p>
+                    <p align="justify">@item.Description</p>
+                </td>
+            </tr>
+
+            //Console.WriteLine(item.Title + " - " + item.Link);
+        }
+    }
+
+    public string Rebild(string st)
+    {
+        char[] a = st.ToCharArray();
+        int i = 0;
+        string newst = "";
+        while (i < a.Length)
+        {
+            if (a[i] == '<')
+            {
+                while (a[i] != '>')
+                {
+                    i++;
+                }
+            }
+            //&nbsp;
+            //&rarr;
+            if (a[i] == '&')
+            {
+                if (a[i + 5] == ';')
+                    i = i + 5;
+            }
+            if (a[i] != '>')
+            {
+                newst += a[i];
+            }
+            i++;
+        }
+        return newst;
+    }
+}
+
+<script type="text/javascript">
+    function timedRefresh(timeoutPeriod) {
+        setTimeout(function () {
+            location.reload(true);
+        }, timeoutPeriod);
+    }
+</script>
+<head>
+    @{ReadXML();}
+</head>
+<body onload="JavaScript: timedRefresh(@timeS*1000);">
+    @{//ReadXML();
+        }
+    <div class="text-center">
+        <h1 class="display-4">RSS Feeder</h1>
+        <table class="demoTable" style="height: 54px;" border="1" cellpadding="10" cellspacing="10">
+            <tbody>
+
+                @{//SetTimer();
+                }
+                @{RSS();
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
